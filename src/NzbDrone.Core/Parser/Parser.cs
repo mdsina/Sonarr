@@ -588,6 +588,7 @@ namespace NzbDrone.Core.Parser
         private static readonly string[] Numbers = new[] { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
 
         private static readonly Regex MultiRegex = new (@"[_. ](?<multi>multi)[_. ]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex MutilEpisodes = new (@"S[0-9]{1,3}E[0-9]{1,3}\sof\s[0-9]{1,3}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public static ParsedEpisodeInfo ParsePath(string path)
         {
@@ -1048,6 +1049,12 @@ namespace NzbDrone.Core.Parser
                         if (first > last)
                         {
                             return null;
+                        }
+
+                        // TODO: stupid workaround
+                        if (first == last && MutilEpisodes.Match(releaseTitle).Success)
+                        {
+                            first = 1;
                         }
 
                         var count = last - first + 1;
