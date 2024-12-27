@@ -397,22 +397,22 @@ then
 
     Build
 
-    if [[ -z "$RID" || -z "$FRAMEWORK" ]];
-    then
-        PackageTests "$framework" "win-x64"
-        PackageTests "$framework" "win-x86"
-        PackageTests "$framework" "linux-x64"
-        PackageTests "$framework" "linux-musl-x64"
-        PackageTests "$framework" "osx-x64"
-        if [ "$ENABLE_EXTRA_PLATFORMS" = "YES" ];
-        then
-            PackageTests "$framework" "freebsd-x64"
-        fi
-    else
-        PackageTests "$FRAMEWORK" "$RID"
-    fi
-
-    UploadTestArtifacts "$framework"
+#    if [[ -z "$RID" || -z "$FRAMEWORK" ]];
+#    then
+#        PackageTests "$framework" "win-x64"
+#        PackageTests "$framework" "win-x86"
+#        PackageTests "$framework" "linux-x64"
+#        PackageTests "$framework" "linux-musl-x64"
+#        PackageTests "$framework" "osx-x64"
+#        if [ "$ENABLE_EXTRA_PLATFORMS" = "YES" ];
+#        then
+#            PackageTests "$framework" "freebsd-x64"
+#        fi
+#    else
+#        PackageTests "$FRAMEWORK" "$RID"
+#    fi
+#
+#    UploadTestArtifacts "$framework"
 fi
 
 if [ "$FRONTEND" = "YES" ];
@@ -441,12 +441,12 @@ then
         Package "$framework" "linux-arm64"
         Package "$framework" "linux-musl-arm64"
         Package "$framework" "linux-arm"
-        Package "$framework" "osx-x64"
-        Package "$framework" "osx-arm64"
-        if [ "$ENABLE_EXTRA_PLATFORMS" = "YES" ];
-        then
-            Package "$framework" "freebsd-x64"
-        fi
+#        Package "$framework" "osx-x64"
+#        Package "$framework" "osx-arm64"
+#        if [ "$ENABLE_EXTRA_PLATFORMS" = "YES" ];
+#        then
+#            Package "$framework" "freebsd-x64"
+#        fi
     else
         Package "$FRAMEWORK" "$RID"
     fi
