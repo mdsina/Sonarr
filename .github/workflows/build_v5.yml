@@ -5,6 +5,7 @@ on:
     branches:
       - v5-develop
       - v5-main
+      - fork-custom
     paths-ignore:
       - "src/Sonarr.Api.*/openapi.json"
   pull_request:
@@ -204,7 +205,7 @@ jobs:
           binary_path: ${{ matrix.binary_path }}
 
   deploy:
-    if: ${{ github.ref_name == 'v5-develop-final' || github.ref_name == 'v5-main-final' }}
+    if: ${{ github.ref_name == 'v5-develop-final' || github.ref_name == 'v5-main-final' || github.ref_name == 'fork-custom' }}
     needs:
       [
         prepare,
