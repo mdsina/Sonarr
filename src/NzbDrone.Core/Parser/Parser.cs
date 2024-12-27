@@ -546,6 +546,8 @@ namespace NzbDrone.Core.Parser
 
         private static readonly Regex MultiRegex = new(@"[-_. \[](?<multi>multi|multilang|multilanguage)[-_. \]]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
+        private static readonly Regex MutilEpisodes = new(@"S[0-9]{1,3}E[0-9]{1,3}\sof\s[0-9]{1,3}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         private static readonly Dictionary<string, int> ShortMonths = new()
         {
             { "jan", 1 },
@@ -949,6 +951,12 @@ namespace NzbDrone.Core.Parser
                         if (first > last)
                         {
                             return null;
+                        }
+
+                        // TODO: stupid workaround
+                        if (first == last && MutilEpisodes.Match(releaseTitle).Success)
+                        {
+                            first = 1;
                         }
 
                         var count = last - first + 1;
