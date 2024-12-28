@@ -86,6 +86,10 @@ namespace NzbDrone.Core.Test.ParserTests
         [TestCase("Series Title / S2E5 of 5 [2015, BDRemux] Eng", "Series Title", 2, new[] { 1, 2, 3, 4, 5 })]
         [TestCase("Series.S101E01-E02.Some.Title.Name.1080p.WEB-DL.AAC2.0.H.264-Release", "Series", 101, new[] { 1, 2 })]
         [TestCase("Series.2006.S101E01-E02.Some.Title.Name.1080p.WEB-DL.AAC2.0.H.264-Release", "Series 2006", 101, new[] { 1, 2 })]
+        [TestCase("Series Title / (5 из 5) Complete [1080p]", "Series Title", 1, new[] { 1, 2, 3, 4, 5 })]
+
+        // TODO: Fix title
+        [TestCase("Series Title [TV] [E5 of 5] [RUS(ext), JAP+Sub] [2024, WEB-DL] [1080p]", "Series Title [TV", 1, new[] { 1, 2, 3, 4, 5 })]
 
         // [TestCase("", "", , new [] {  })]
         public void should_parse_multiple_episodes(string postTitle, string title, int season, int[] episodes)
