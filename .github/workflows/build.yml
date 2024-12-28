@@ -56,13 +56,14 @@ jobs:
           echo "major_version=${{ env.SONARR_MAJOR_VERSION }}" >> "$GITHUB_OUTPUT"
           echo "version=$SONARR_VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Enable Extra Platforms In SDK
-        shell: bash
-        run: ./build.sh --enable-extra-platforms-in-sdk
+#      - name: Enable Extra Platforms In SDK
+#        shell: bash
+#        run: ./build.sh --enable-extra-platforms-in-sdk
 
       - name: Build Backend
         shell: bash
-        run: ./build.sh --backend --enable-extra-platforms --packages
+#        run: ./build.sh --backend --enable-extra-platforms --packages
+        run: ./build.sh --backend --packages
 
       # Test Artifacts
 
