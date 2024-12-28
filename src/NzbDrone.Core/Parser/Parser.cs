@@ -208,7 +208,7 @@ namespace NzbDrone.Core.Parser
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Single or multi episode releases with multiple titles, then season and episode numbers after the last title. (Title1 / Title2 / ... / S1E1-2 of 6)
-                new Regex(@"^((?<title>.*?)[ ._]\/[ ._])+\(?S(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:\W|_)?E?[ ._]?(?<episode>(?<!\d+)\d{1,2}(?!\d+))(?:-(?<episode>(?<!\d+)\d{1,2}(?!\d+)))?(?:[ ._]of[ ._](?<episodecount>\d{1,2}))?\)?[ ._][\(\[]",
+                new Regex(@"^((?<title>.*?)[ ._]\/[ ._])+\(?S(?<season>(?<!\d+)\d{1,2}(?!\d+))(?:\W|_)?E?[ ._]?(?<episode>(?<!\d+)\d{1,2}(?!\d+))(?:-(?<episode>(?<!\d+)\d{1,2}(?!\d+)))?(?:[ ._](of|из)[ ._](?<episodecount>\d{1,2}))?\)?[ ._][\(\[]",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Multi-episode with title (S01E99-100, S01E05-06)
@@ -272,7 +272,7 @@ namespace NzbDrone.Core.Parser
                           RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Mini-Series, treated as season 1, episodes are labelled as XofY
-                new Regex(@"^(?<title>.+?)(?:\W+(?:(?<episode>(?<!\d+)\d{1,2}(?!\d+))of\d+)+)",
+                new Regex(@"^(?<title>.+?)(?:\W+(?:(?<episode>(?<!\d+)\d{1,2}(?!\d+))(of|из)\d+)+)",
                           RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
                 // Supports Season 01 Episode 03
@@ -438,6 +438,14 @@ namespace NzbDrone.Core.Parser
                 new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)?(?<title>.+?)(?:[-_. ]\[)(?:(?:-?)(?<absoluteepisode>(?<!\d+)\d{2,3}(\.\d{1,2})?(?!\d+|[ip])))+(?:\][-_. ]).*?(?<hash>[(\[]\w{8}[)\]])?$",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled),
 
+                // Anime - Title / Another Title (5 из 5) from BudLightSubs
+                new Regex(@"^(?<title>[^/]+).*(?:[-_. ])\((?<episode>\d+)\s(of|из)\s(?<episode>\d+)\).*$",
+                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
+                // Anime - Title / Another Title [TV] [EX of N] from AnimeLayer
+                new Regex(@"^(?<title>[^/\[]+)(?:[-_. ]\[)TV(?:\][-_. ]).*(\[E\d+\s+of\s+\d+\]).*$",
+                    RegexOptions.IgnoreCase | RegexOptions.Compiled),
+
                 // Anime - Title Absolute Episode Number
                 new Regex(@"^(?:\[(?<subgroup>.+?)\][-_. ]?)?(?<title>.+?)(?:[-_. ]+(?<absoluteepisode>(?<!\d+)\d{2,4}(\.\d{1,2})?(?!\d+|[ip])))+.*?(?<hash>[(\[]\w{8}[)\]])?$",
                           RegexOptions.IgnoreCase | RegexOptions.Compiled),
@@ -591,7 +599,7 @@ namespace NzbDrone.Core.Parser
         private static readonly string[] Numbers = new[] { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
 
         private static readonly Regex MultiRegex = new (@"[_. ](?<multi>multi)[_. ]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        private static readonly Regex MutilEpisodes = new (@"S[0-9]{1,3}E[0-9]{1,3}\sof\s[0-9]{1,3}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex MultiEpisodes = new (@"(S\d+)?E?\d+\s(of|из)\s\d+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public static ParsedEpisodeInfo ParsePath(string path)
         {
@@ -1055,7 +1063,7 @@ namespace NzbDrone.Core.Parser
                         }
 
                         // TODO: stupid workaround
-                        if (first == last && MutilEpisodes.Match(releaseTitle).Success)
+                        if (first == last && MultiEpisodes.Match(releaseTitle).Success)
                         {
                             first = 1;
                         }
