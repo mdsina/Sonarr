@@ -565,7 +565,7 @@ namespace NzbDrone.Core.Parser
         private static readonly Regex CleanQualityBracketsRegex = new Regex(@"\[[a-z0-9 ._-]+\]$",
                                                                    RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex ReleaseGroupRegex = new Regex(@"-(?<releasegroup>[a-z0-9]+(?<part2>-[a-z0-9]+)?(?!.+?(?:480p|576p|720p|1080p|2160p)))(?<!(?:WEB-DL|Blu-Ray|480p|576p|720p|1080p|2160p|DTS-HD|DTS-X|DTS-MA|DTS-ES|-ES|-EN|-CAT|-GER|[ ._]\d{4}-\d{2}|-\d{2})(?:\k<part2>)?)(?:\b|[-._ ]|$)|[-._ ]\[(?<releasegroup>[a-z0-9]+)\]$",
+        private static readonly Regex ReleaseGroupRegex = new Regex(@"-(?<releasegroup>[a-z0-9]+(?<part2>-[a-z0-9]+)?(?!.+?(?:480p|576p|720p|1080p|2160p)))(?<!(?:WEB-DL|Blu-Ray|480p|576p|720p|1080p|2160p|DTS-HD|DTS-X|DTS-MA|DTS-ES|-ES|-EN|-CAT|-GER|-FRA|-FRE|-ITA|\d{1,2}-bit|[ ._]\d{4}-\d{2}|-\d{2})(?:\k<part2>)?)(?:\b|[-._ ]|$)|[-._ ]\[(?<releasegroup>[a-z0-9]+)\]$",
                                                                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex InvalidReleaseGroupRegex = new Regex(@"^([se]\d+|[0-9a-f]{8})$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -1206,14 +1206,12 @@ namespace NzbDrone.Core.Parser
                 {
                     airmonth = Convert.ToInt32(matchCollection[0].Groups["airmonth"].Value);
                     airday = Convert.ToInt32(matchCollection[0].Groups["airday"].Value);
+                }
 
-                    // Swap day and month if month is bigger than 12 (scene fail)
-                    if (airmonth > 12)
-                    {
-                        var tempDay = airday;
-                        airday = airmonth;
-                        airmonth = tempDay;
-                    }
+                // Swap day and month if month is bigger than 12 (scene fail)
+                if (airmonth > 12)
+                {
+                    (airday, airmonth) = (airmonth, airday);
                 }
 
                 DateTime airDate;
