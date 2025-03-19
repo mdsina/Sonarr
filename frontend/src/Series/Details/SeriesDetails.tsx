@@ -41,7 +41,7 @@ import { Image, Statistics } from 'Series/Series';
 import SeriesGenres from 'Series/SeriesGenres';
 import SeriesPoster from 'Series/SeriesPoster';
 import { getSeriesStatusDetails } from 'Series/SeriesStatus';
-import QualityProfileNameConnector from 'Settings/Profiles/Quality/QualityProfileName';
+import QualityProfileName from 'Settings/Profiles/Quality/QualityProfileName';
 import { executeCommand } from 'Store/Actions/commandActions';
 import { clearEpisodes, fetchEpisodes } from 'Store/Actions/episodeActions';
 import {
@@ -188,22 +188,23 @@ function SeriesDetails({ seriesId }: SeriesDetailsProps) {
   } = useSelector(createEpisodeFilesSelector());
 
   const commands = useSelector(createCommandsSelector());
-  const isSaving = useSelector((state: AppState) => state.series.isSaving);
 
   const { isRefreshing, isRenaming, isSearching } = useMemo(() => {
-    const isSeriesRefreshing = isCommandExecuting(
-      findCommand(commands, {
-        name: commandNames.REFRESH_SERIES,
-        seriesId,
-      })
-    );
     const seriesRefreshingCommand = findCommand(commands, {
       name: commandNames.REFRESH_SERIES,
     });
 
+    const isSeriesRefreshingCommandExecuting = isCommandExecuting(
+      seriesRefreshingCommand
+    );
+
     const allSeriesRefreshing =
-      isCommandExecuting(seriesRefreshingCommand) &&
-      !seriesRefreshingCommand?.body.seriesId;
+      isSeriesRefreshingCommandExecuting &&
+      !seriesRefreshingCommand?.body.seriesIds?.length;
+
+    const isSeriesRefreshing =
+      isSeriesRefreshingCommandExecuting &&
+      seriesRefreshingCommand?.body.seriesIds?.includes(seriesId);
 
     const isSearchingExecuting = isCommandExecuting(
       findCommand(commands, {
@@ -396,7 +397,7 @@ function SeriesDetails({ seriesId }: SeriesDetailsProps) {
   }, [populate]);
 
   useEffect(() => {
-    registerPagePopulator(populate);
+    registerPagePopulator(populate, ['seriesUpdated']);
 
     return () => {
       unregisterPagePopulator(populate);
@@ -437,6 +438,7 @@ function SeriesDetails({ seriesId }: SeriesDetailsProps) {
     genres,
     tags,
     year,
+    isSaving = false,
   } = series;
 
   const { episodeFileCount = 0, sizeOnDisk = 0, lastAired } = statistics;
@@ -679,9 +681,7 @@ function SeriesDetails({ seriesId }: SeriesDetailsProps) {
                   <div>
                     <Icon name={icons.PROFILE} size={17} />
                     <span className={styles.qualityProfileName}>
-                      <QualityProfileNameConnector
-                        qualityProfileId={qualityProfileId}
-                      />
+                      <QualityProfileName qualityProfileId={qualityProfileId} />
                     </span>
                   </div>
                 </Label>
